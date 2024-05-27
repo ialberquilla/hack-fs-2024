@@ -1,6 +1,9 @@
 import { SubscribeMessage, WebSocketGateway, OnGatewayInit, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
+import { uploadToIPFS } from 'src/lib/ipfs';
+const fs = require('fs');
+
 
 @WebSocketGateway()
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -9,8 +12,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   private logger: Logger = new Logger('EventsGateway');
 
   @SubscribeMessage('score')
-  handleMessage(client: Socket, payload: string): void {
+  async handleMessage(client: Socket, payload: string): Promise<void> {
     this.logger.log(`Client ${client.id} score: ${payload}`);
+    const buffer = Buffer.from(payload, 'base64');
+
+    const result = await uploadToIPFS('score.txt', buffer)
+
+    this.logger.log('File uploaded to IPFS');
+
+    this.logger.log(result);
+
   }
 
   afterInit(server: Server) {
