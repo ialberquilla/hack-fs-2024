@@ -1,15 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Address } from "~~/components/scaffold-eth";
 import { Unity, useUnityContext } from "react-unity-webgl";
 
 const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
-
   const { unityProvider } = useUnityContext({
     loaderUrl: "build/build3.loader.js",
     dataUrl: "build/webgl.data",
