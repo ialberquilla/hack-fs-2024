@@ -21,11 +21,11 @@ export const menuLinks: HeaderMenuLink[] = [
   },
   {
     label: "Your scores",
-    href: "/debug",
+    href: "/scores",
   },
   {
     label: "Leaderboard",
-    href: "/debug",
+    href: "/leaderboard",
   },
 ];
 
