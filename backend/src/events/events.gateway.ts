@@ -1,27 +1,35 @@
-import { SubscribeMessage, WebSocketGateway, OnGatewayInit, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  OnGatewayInit,
+  WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { uploadToIPFS } from 'src/lib/ipfs';
-const fs = require('fs');
-
+import { IpfsService } from 'src/ipfs/ipfs.service';
 
 @WebSocketGateway()
-export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-
+export class EventsGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('EventsGateway');
+
+  constructor(private ipfsService: IpfsService) {}
 
   @SubscribeMessage('score')
   async handleMessage(client: Socket, payload: string): Promise<void> {
     this.logger.log(`Client ${client.id} score: ${payload}`);
-    const buffer = Buffer.from(payload, 'base64');
+    const content = JSON.parse(payload);
 
-    const result = await uploadToIPFS('score.txt', buffer)
+    await this.ipfsService.uploadToIPFS(
+      `score-${content.user}-${content.score}.json`,
+      Buffer.from(JSON.stringify(content)),
+    );
 
-    this.logger.log('File uploaded to IPFS');
-
-    this.logger.log(result);
-
+    this.logger.log('Uploaded to IPFS');
   }
 
   afterInit(server: Server) {
