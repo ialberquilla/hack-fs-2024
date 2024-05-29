@@ -15,6 +15,7 @@ namespace AmazingTrack
             ref var playerStatComponent = ref playerStatService.GetPlayerStat();
             
             string text = "Your score: " + playerStatComponent.Score;
+            WalletConnect.Instance.SendMessage(playerStatComponent.Score);
             bool newRecord = playerStatComponent.Score == playerStatComponent.HighScore;
             if (newRecord)
                 text += "\nNew record !";

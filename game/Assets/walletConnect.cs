@@ -7,9 +7,9 @@ using UnityEngine.SceneManagement;
 using WalletConnectUnity.Core;
 using WebSocketSharp;
 
-public class walletConnect : MonoBehaviour
+public class WalletConnect : MonoBehaviour
 {
-    public static walletConnect Instance { get; private set; }
+    public static WalletConnect Instance { get; private set; }
 
     private WebSocket _webSocketConnection;
     private string _wallet;
@@ -49,16 +49,24 @@ public class walletConnect : MonoBehaviour
 
         Debug.Log("Ws connection opened:");
 
+        SceneManager.LoadScene("AmazingTrack");
+
     }
 
-    public void SendMessage(string user, int score)
+    public void SendMessage(int score)
     {
-        var payload = new {
+        var payload = new Payload{
             user = _wallet,
             score = score
         };
 
-        string jsonPayload = JsonUtility.ToJson(payload);
-        _webSocketConnection.Send(jsonPayload);
+        string message = _wallet + ":" + score;
+        _webSocketConnection.Send(message);
     }
+}
+
+public class Payload
+{
+    public string user { get; set; }
+    public int score { get; set; }
 }
