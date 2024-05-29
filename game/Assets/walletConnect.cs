@@ -4,9 +4,29 @@ using UnityEngine;
 using Monaverse;
 using Monaverse.Core;
 using UnityEngine.SceneManagement;
+using WalletConnectUnity.Core;
+using WebSocketSharp;
 
 public class walletConnect : MonoBehaviour
 {
+    public static walletConnect Instance { get; private set; }
+
+    private WebSocket _webSocketConnection;
+    private string _wallet;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void Start()
     {
         Invoke("Connect", 1f);
@@ -21,8 +41,24 @@ public class walletConnect : MonoBehaviour
     async void Connect()
     {
         Debug.Log("Connecting to Mona server...");
-        string wallet = await MonaverseManager.Instance.SDK.ConnectWallet();
-        Debug.Log("Connected to Mona server. Wallet: " + wallet);
-        SceneManager.LoadScene("AmazingTrack");
+        _wallet = await MonaverseManager.Instance.SDK.ConnectWallet();
+        Debug.Log("Connected to Mona server. Wallet: " + _wallet);
+
+        _webSocketConnection = new WebSocket("ws://localhost:3100");
+        _webSocketConnection.Connect();
+
+        Debug.Log("Ws connection opened:");
+
+    }
+
+    public void SendMessage(string user, int score)
+    {
+        var payload = new {
+            user = _wallet,
+            score = score
+        };
+
+        string jsonPayload = JsonUtility.ToJson(payload);
+        _webSocketConnection.Send(jsonPayload);
     }
 }
