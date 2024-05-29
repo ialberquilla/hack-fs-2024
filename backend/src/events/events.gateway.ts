@@ -5,9 +5,11 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  MessageBody,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
-import { Socket, Server } from 'socket.io';
+import { Server, WebSocket } from 'ws';
 import { IpfsService } from 'src/ipfs/ipfs.service';
 
 @WebSocketGateway()
@@ -20,8 +22,8 @@ export class EventsGateway
   constructor(private ipfsService: IpfsService) {}
 
   @SubscribeMessage('score')
-  async handleMessage(client: Socket, payload: string): Promise<void> {
-    this.logger.log(`Client ${client.id} score: ${payload}`);
+  async handleMessage(@MessageBody() payload: string, @ConnectedSocket() client: WebSocket): Promise<void> {
+    this.logger.log(`Client ${client.url} score: ${payload}`);
     const content = JSON.parse(payload);
 
     await this.ipfsService.uploadToIPFS(
@@ -36,11 +38,11 @@ export class EventsGateway
     this.logger.log('Init');
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Client connected: ${client.id}`);
+  handleConnection(client: WebSocket, ...args: any[]) {
+    this.logger.log(`Client connected: ${client.url}`);
   }
 
-  handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+  handleDisconnect(client: WebSocket) {
+    this.logger.log(`Client disconnected: ${client.url}`);
   }
 }
