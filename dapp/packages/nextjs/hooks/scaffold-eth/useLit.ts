@@ -1,40 +1,30 @@
 // ** Hooks
-import { useEffect, useState } from "react";
-import { LitAbility, LitActionResource } from "@lit-protocol/auth-helpers";
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
-import { LitNodeClient } from "@lit-protocol/lit-node-client";
-import { Signer, Wallet, ethers } from "ethers";
-import { SiweMessage } from 'siwe';
+import { Wallet } from "ethers";
+import { ethers } from "ethers";
+import { SiweMessage } from "siwe";
+
 /////////////////////////////////////
 export function useLit() {
-  useEffect(() => {
-    connect();
-  }, []);
-
-  const [client, setClient] = useState<LitJsSdk.LitNodeClient | null>(null);
-  const [authSig, setAuthSig] = useState<any | null>(null);
-
   const litActionCode = `
 const go = async () => {  
-  const url = "https://api.weather.gov/gridpoints/TOP/31,80/forecast";
+  const url = "https://hack-2024-tok9d.ondigitalocean.app";
   const resp = await fetch(url).then((response) => response.json());
-  const temp = resp.properties.periods[0].temperature;
+  const isValid = resp.data.valid;
 
-  // only sign if the temperature is above 60.  if it's below 60, exit.
-  if (temp < 60) {
+  // only sign if the score is valid
+  if (!isValid) {
     return;
   }
   
-  // this requests a signature share from the Lit Node
-  // the signature share will be automatically returned in the HTTP response from the node
-  // all the params (toSign, publicKey, sigName) are passed in from the LitJsSdk.executeJs() function
+  // Signes the message with the score to send the transaction
   const sigShare = await LitActions.signEcdsa({ toSign, publicKey , sigName });
 };
 
 go();
 `;
 
-  const connect = async () => {
+  const runLitAction = async (score: string) => {
     const client = new LitJsSdk.LitNodeClient({
       alertWhenUnauthorized: false,
       litNetwork: "manzano",
@@ -43,29 +33,26 @@ go();
 
     await client.connect();
 
-    setClient(client);
+    const messageHash = ethers.solidityPackedKeccak256(["uint"], [score]);
 
-    const auth = await generateAuthSig();
+    const messageHashBinary = ethers.getBytes(messageHash);
+
+    const auth = await generateAuthSig(client);
 
     const signatures = await client.executeJs({
-        code: litActionCode,
-        sessionSigs: auth,
-        jsParams: {
-          toSign: "message",
-          publicKey: "0x02e5896d70c1bc4b4844458748fe0f936c7919d7968341e391fb6d82c258192e64",
-          sigName: "sig1",
-        },
-      });
+      code: litActionCode,
+      sessionSigs: auth,
+      jsParams: {
+        toSign: messageHashBinary,
+        publicKey: "0x02e5896d70c1bc4b4844458748fe0f936c7919d7968341e391fb6d82c258192e64",
+        sigName: "sig1",
+      },
+    });
 
-      console.log("signatures: ", signatures);
-
+    return signatures;
   };
 
-  const runLitAction = async () => {
-
-  };
-
-  const generateAuthSig = async () => {
+  const generateAuthSig = async (client: any) => {
     const nonce = await client?.getLatestBlockhash();
     const walletSigner = new Wallet(process.env.NEXT_PUBLIC_WALLET_PK ?? "");
     const signerAddress = await walletSigner.getAddress();
@@ -97,12 +84,10 @@ go();
       address: signerAddress,
     };
 
-    setAuthSig(authSig);
     return authSig;
   };
 
   return {
-    client,
     runLitAction,
   };
 }
