@@ -34,57 +34,32 @@ const Debug: NextPage = () => {
                   Amazing track
                 </th>
                 <td className="px-6 py-4">
-                  23
+                  ialberquilla.eth
                 </td>
                 <td className="px-6 py-4">
-                  2024-05-23
+                  135
                 </td>
                 <td className="px-6 py-4">
-                  <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Mint</a>
+                 29-05-2024
                 </td>
               </tr>
+
               <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   Amazing track
                 </th>
                 <td className="px-6 py-4">
-                  38
+                  tereth.eth
                 </td>
                 <td className="px-6 py-4">
-                  2024-05-22
+                  130
                 </td>
                 <td className="px-6 py-4">
-                  <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Mint</a>
+                 30-05-2024
                 </td>
               </tr>
-              <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  Amazing track
-                </th>
-                <td className="px-6 py-4">
-                  12
-                </td>
-                <td className="px-6 py-4">
-                  2024-05-24
-                </td>
-                <td className="px-6 py-4">
-                  <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Mint</a>
-                </td>
-              </tr>
-              <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  Amazing track
-                </th>
-                <td className="px-6 py-4">
-                  39
-                </td>
-                <td className="px-6 py-4">
-                  2024-05-24
-                </td>
-                <td className="px-6 py-4">
-                  <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Mint</a>
-                </td>
-              </tr>
+
+
             </tbody>
           </table>
         </div>

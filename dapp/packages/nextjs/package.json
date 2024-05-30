@@ -16,6 +16,9 @@
   "dependencies": {
     "@fleekxyz/sdk": "^1.4.2",
     "@heroicons/react": "^2.0.11",
+    "@huddle01/react": "^2.0.14",
+    "@huddle01/server-sdk": "^2.2.2",
+    "@lit-protocol/lit-node-client": "^5.1.0",
     "@rainbow-me/rainbowkit": "2.1.0",
     "@tanstack/react-query": "^5.28.6",
     "@uniswap/sdk-core": "^4.0.1",
@@ -23,6 +26,8 @@
     "blo": "^1.0.1",
     "burner-connector": "^0.0.7",
     "daisyui": "4.5.0",
+    "ethers": "^6.12.1",
+    "ethersjs": "^0.0.1-security",
     "next": "^14.0.4",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",

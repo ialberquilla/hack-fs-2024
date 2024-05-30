@@ -11,6 +11,7 @@ import { CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outl
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
+import { useLit } from "~~/hooks/scaffold-eth/useLit";
 
 type AddressProps = {
   address?: AddressType;
@@ -40,16 +41,23 @@ export const Address = ({ address, disableAddressLink, format, size = "base" }: 
 
   const { targetNetwork } = useTargetNetwork();
 
+  const {runLitAction} = useLit();
+
+  console.log({ checkSumAddress, targetNetwork })
+
+  runLitAction();
+
   const { data: fetchedEns } = useEnsName({
     address: checkSumAddress,
-    chainId: 1,
+    chainId: 11155111,
     query: {
       enabled: isAddress(checkSumAddress ?? ""),
     },
   });
+  
   const { data: fetchedEnsAvatar } = useEnsAvatar({
     name: fetchedEns ? normalize(fetchedEns) : undefined,
-    chainId: 1,
+    chainId: 11155111,
     query: {
       enabled: Boolean(fetchedEns),
       gcTime: 30_000,

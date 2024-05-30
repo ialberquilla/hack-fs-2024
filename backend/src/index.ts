@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import dotenv from "dotenv";
 import { FleekSdk, PersonalAccessTokenService } from "@fleekxyz/sdk";
+const express = require("express");
 
 dotenv.config();
 
@@ -22,6 +23,25 @@ export const uploadToIPFS = async (filename: string, content: Buffer) => {
 
   return result;
 };
+
+const listFiles = async () => {
+  const result = await fleekSdk.storage().list();
+  return result;
+};
+
+
+const app = express();
+const port = 3002;
+
+app.get("/", async (req: any, res: any) => {
+  const files = await listFiles();
+
+  res.json(files);
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
 
 const ws = new WebSocket.Server({ port: 3100 }, () =>
   console.log("Server started")
@@ -46,4 +66,5 @@ ws.on("connection", (socket: any) => {
         console.error("Error uploading to IPFS:", err);
       });
   });
+
 });
