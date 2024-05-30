@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { LitAbility, LitActionResource } from "@lit-protocol/auth-helpers";
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { LitNodeClient } from "@lit-protocol/lit-node-client";
-import { ethers } from "ethers";
-
+import { Signer, Wallet, ethers } from "ethers";
+import { SiweMessage } from 'siwe';
 /////////////////////////////////////
 export function useLit() {
   useEffect(() => {
@@ -12,6 +12,7 @@ export function useLit() {
   }, []);
 
   const [client, setClient] = useState<LitJsSdk.LitNodeClient | null>(null);
+  const [authSig, setAuthSig] = useState<any | null>(null);
 
   const litActionCode = `
 const go = async () => {  
@@ -36,43 +37,68 @@ go();
   const connect = async () => {
     const client = new LitJsSdk.LitNodeClient({
       alertWhenUnauthorized: false,
-      litNetwork: "cayenne",
+      litNetwork: "manzano",
       debug: true,
     });
 
     await client.connect();
 
     setClient(client);
+
+    const auth = await generateAuthSig();
+
+    const signatures = await client.executeJs({
+        code: litActionCode,
+        sessionSigs: auth,
+        jsParams: {
+          toSign: "message",
+          publicKey: "0x02e5896d70c1bc4b4844458748fe0f936c7919d7968341e391fb6d82c258192e64",
+          sigName: "sig1",
+        },
+      });
+
+      console.log("signatures: ", signatures);
+
   };
 
   const runLitAction = async () => {
-    let workingClient;
 
-    workingClient = new LitJsSdk.LitNodeClient({
-      alertWhenUnauthorized: false,
-      litNetwork: "manzano",
-      debug: true,
+  };
+
+  const generateAuthSig = async () => {
+    const nonce = await client?.getLatestBlockhash();
+    const walletSigner = new Wallet(process.env.NEXT_PUBLIC_WALLET_PK ?? "");
+    const signerAddress = await walletSigner.getAddress();
+
+    const domain = "localhost";
+    const origin = "https://localhost/login";
+    const statement = "This is a test statement.";
+
+    const expirationTime = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString();
+
+    const siweMessage = new SiweMessage({
+      domain,
+      address: signerAddress,
+      statement,
+      uri: origin,
+      version: "1",
+      chainId: 137,
+      nonce,
+      expirationTime,
     });
+    const messageToSign = siweMessage.prepareMessage();
 
-    await workingClient.connect();
+    const signature = await walletSigner.signMessage(messageToSign);
 
-    const sessionSigs = await workingClient?.getSessionSigs({
-      chain: "sepolia",
-      resourceAbilityRequests: [],
-    });
+    const authSig = {
+      sig: signature,
+      derivedVia: "web3.eth.personal.sign",
+      signedMessage: messageToSign,
+      address: signerAddress,
+    };
 
-    console.log({ sessionSigs });
-
-    const signatures = await workingClient?.executeJs({
-      code: litActionCode,
-      sessionSigs: {},
-      jsParams: {
-        toSign: "message",
-        publicKey: "0x02e5896d70c1bc4b4844458748fe0f936c7919d7968341e391fb6d82c258192e64",
-        sigName: "sig1",
-      },
-    });
-    console.log("signatures: ", signatures);
+    setAuthSig(authSig);
+    return authSig;
   };
 
   return {
