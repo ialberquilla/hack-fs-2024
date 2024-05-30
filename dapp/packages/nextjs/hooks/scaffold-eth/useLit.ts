@@ -44,7 +44,7 @@ go();
       sessionSigs: auth,
       jsParams: {
         toSign: messageHashBinary,
-        publicKey: "0x02e5896d70c1bc4b4844458748fe0f936c7919d7968341e391fb6d82c258192e64",
+        publicKey: process.env.NEXT_PUBLIC_LIT_PUBK ?? "",
         sigName: "sig1",
       },
     });
