@@ -41,20 +41,15 @@ export const Address = ({ address, disableAddressLink, format, size = "base" }: 
 
   const { targetNetwork } = useTargetNetwork();
 
-  const {runLitAction} = useLit();
-
-  console.log({ checkSumAddress, targetNetwork })
-
-  runLitAction();
 
   const { data: fetchedEns } = useEnsName({
-    address: checkSumAddress,
+    address: checkSumAddress?.toLocaleLowerCase() ?? "",
     chainId: 11155111,
     query: {
       enabled: isAddress(checkSumAddress ?? ""),
     },
   });
-  
+
   const { data: fetchedEnsAvatar } = useEnsAvatar({
     name: fetchedEns ? normalize(fetchedEns) : undefined,
     chainId: 11155111,

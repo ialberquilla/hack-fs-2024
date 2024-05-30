@@ -45,6 +45,8 @@ export const AddressInfoDropdown = ({
   };
   useOutsideClick(dropdownRef, closeDropdown);
 
+  console.log({displayName})
+
   return (
     <>
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
