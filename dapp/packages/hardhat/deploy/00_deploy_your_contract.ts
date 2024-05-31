@@ -9,6 +9,15 @@ async function main() {
 
   console.log("Scoring deployed to:", await scoring.getAddress());
 
+  const NFT = await ethers.getContractFactory("NFTTier");
+
+  const nftTier1 = await NFT.deploy();
+  const nftTier2 = await NFT.deploy();
+  const nftTier3 = await NFT.deploy();
+
+  console.log("NFT Tier 1 deployed to:", await nftTier1.getAddress());
+  console.log("NFT Tier 2 deployed to:", await nftTier2.getAddress());
+  console.log("NFT Tier 3 deployed to:", await nftTier3.getAddress());
 
 }
 
