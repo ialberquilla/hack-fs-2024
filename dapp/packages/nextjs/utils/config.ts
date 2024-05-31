@@ -19,3 +19,9 @@ export const polygonPublicClient = createPublicClient({
   chain: polygon,
   transport: http(),
 });
+
+export const tiersRoom = {
+  "1": "bsa-bcbj-omw",
+  "2": "amn-iplw-ehp",
+  "3": "upq-fwor-ibs",
+}
