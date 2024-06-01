@@ -10,17 +10,23 @@ import {
 } from "@huddle01/react/hooks";
 import { Inter } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
-import { config } from "../../utils/config";
+import { config, tiersRoom } from "../../utils/config";
 import { useSignMessage } from "wagmi";
 import { useAccount } from "wagmi";
 import toast from "react-hot-toast";
+import { useSearchParams } from 'next/navigation'
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Room() {
 
+  const searchParams = useSearchParams()
+
+  const id = searchParams.get('id')
+
   const params = {
-    roomId: "upq-fwor-ibs",
+  //@ts-ignore
+    roomId:  tiersRoom[id || "3"],
   };  
   const [isLoaded, setIsLoaded] = useState(false);
   const { address } = useAccount();

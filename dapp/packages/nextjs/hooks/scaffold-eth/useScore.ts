@@ -6,20 +6,21 @@ import { useWriteContract } from "wagmi";
 type WriteFnNames = "addScore";
 
 /////////////////////////////////////
-export function useSoring() {
+export function useScore(
+) {
   const [isLoading, setIsLoading] = useState(false);
   const { writeContractAsync } = useWriteContract();
 
   const scoreAddress = "0x407133209fd8Adaf3fcd3bEcD2A94082f1B1EB28"
 
-  const executeManagerAction = async (functionName: WriteFnNames, ...args: any) => {
+  const executeManagerAction = async (functionName: WriteFnNames, score:any) => {
     try {
       setIsLoading(true);
       return await writeContractAsync({
         abi: Scoring__factory.abi,
         address: scoreAddress as `0x${string}`,
         functionName,
-        args,
+        args:[score],
       });
     } catch (error) {
       throw error;
@@ -31,8 +32,7 @@ export function useSoring() {
   return {
     isLoading,
     addScore: (score: number) =>
-      executeManagerAction("addScore", {
-        score: BigInt(score),
-      }),
+      executeManagerAction("addScore", BigInt(score),
+      ),
   };
 }

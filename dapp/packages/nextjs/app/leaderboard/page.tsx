@@ -37,10 +37,10 @@ const Debug: NextPage = () => {
                   ialberquilla.eth
                 </td>
                 <td className="px-6 py-4">
-                  135
+                  78
                 </td>
                 <td className="px-6 py-4">
-                 29-05-2024
+                 31-05-2024
                 </td>
               </tr>
 

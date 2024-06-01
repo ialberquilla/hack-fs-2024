@@ -42,26 +42,26 @@ export async function POST(request: Request) {
   });
 
   if (verify) {
-    // const contractResponse = await publicClient.readContract({
-    //   address:
-    //     roomDetails.tokenGatingInfo.tokenGatingConditions[0].contractAddress,
-    //   abi: [
-    //     {
-    //       inputs: [{ name: "owner", type: "address" }],
-    //       name: "balanceOf",
-    //       outputs: [{ name: "", type: "uint256" }],
-    //       stateMutability: "view",
-    //       type: "function",
-    //     },
-    //   ],
-    //   functionName: "balanceOf",
-    //   args: [address],
-    // });
-    // const balance = Number(contractResponse);
+    const contractResponse = await publicClient.readContract({
+      address:
+        roomDetails.tokenGatingInfo.tokenGatingConditions[0].contractAddress,
+      abi: [
+        {
+          inputs: [{ name: "owner", type: "address" }],
+          name: "balanceOf",
+          outputs: [{ name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      functionName: "balanceOf",
+      args: [address],
+    });
+    const balance = Number(contractResponse);
 
-    // console.log("balance", balance);
+    console.log("balance", balance);
 
-    if (false) {
+    if (roomId != 'upq-fwor-ibs') {
       return new Response("You don't hold token to join this room", {
         status: 400,
       });
