@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
     console.log("balance", balance);
 
-    if (roomId != 'upq-fwor-ibs') {
+    if (balance == 0) {
       return new Response("You don't hold token to join this room", {
         status: 400,
       });
