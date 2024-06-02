@@ -7,6 +7,7 @@ import {NFTTier} from './NFTTier.sol';
 contract Scoring {
 
 	address public immutable owner;
+	address public immutable autSigner;
 	mapping(address => uint) public scores;
 	address NFT_TIER_1 = 0xab9515BB9DBe00764eA6A8Adc628425f8F65A456;
 	address NFT_TIER_2 = 0xAE507bF7164326827513F1AA794fb777aA1A291E;
@@ -17,8 +18,9 @@ contract Scoring {
 		uint score
 	);
 
-	constructor(address _owner) {
+	constructor(address _owner, address _autSigner) {
 		owner = _owner;
+		autSigner = _autSigner;
 	}
 
 	modifier isOwner() {
@@ -26,7 +28,18 @@ contract Scoring {
 		_;
 	}
 
-	function addScore(uint _score) public {
+	function addScore(uint _score, bytes calldata signature) public {
+
+		bytes32 message = keccak256(abi.encodePacked(msg.sender, _score));
+
+		bytes32 ethSignedMessageHash = keccak256(
+			abi.encodePacked("\x19Ethereum Signed Message:\n32", message)
+		);
+
+		address signer = ecrecover(ethSignedMessageHash, uint8(signature[64]), signature[0], signature[1]);
+
+		require(signer == autSigner, "Invalid Signature");
+
 		scores[msg.sender] = _score;
 
 		if (_score >= 500) {
